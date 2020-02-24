@@ -15,10 +15,8 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/definitions')
-      .expect(200)
-      .expect([{"questions":[{"key":"type"}],"name":"confetti"},{"name":"3"}]);
-  });
+  it('/ (GET)', () => request(app.getHttpServer())
+    .get('/definitions')
+    .expect(200)
+    .expect([{ questions: [{ key: 'type' }], name: 'confetti' }, { name: '3' }]));
 });

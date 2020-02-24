@@ -14,25 +14,26 @@ describe('AppController', () => {
 
     appController = app.get<AppController>(AppController);
     appService = app.get<AppService>(AppService);
-  }); 
-  
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
   });
   afterAll(async () => {
-    await new Promise(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
+    // avoid jest open handle error
+    await new Promise((resolve) => setTimeout(() => resolve(), 500));
   });
-  
+
   describe('getDefinition', () => {
     it('should return a definition', async () => {
       const definition = { name: 'definition1' };
       jest.spyOn(appService, 'getDefinition').mockImplementation(async () => definition);
-      const response =  await appController.getDefinition('definition1')
+      const response = await appController.getDefinition('definition1');
       expect(response).toEqual(definition);
     });
     it('should throw an error if appService.getDefinitions throws', async () => {
       const error = new Error('default error');
-      jest.spyOn(appService, 'getDefinition').mockImplementation(async () => { throw error });
+      jest.spyOn(appService, 'getDefinition').mockImplementation(async () => { throw error; });
       expect(appController.getDefinition('definition1')).rejects.toBe(error);
     });
   });
@@ -45,7 +46,7 @@ describe('AppController', () => {
     });
     it('should throw an error if appService.getDefinitions throws', async () => {
       const error = new Error('default error');
-      jest.spyOn(appService, 'getDefinitions').mockImplementation(async () => { throw error });
+      jest.spyOn(appService, 'getDefinitions').mockImplementation(async () => { throw error; });
       expect(appController.getDefinitions()).rejects.toBe(error);
     });
   });
@@ -64,7 +65,7 @@ describe('AppController', () => {
     // });
     it('should throw an error if appService.getDefinitions throws', async () => {
       const error = new Error('default error');
-      jest.spyOn(appService, 'insertDefinition').mockImplementation(async () => { throw error });
+      jest.spyOn(appService, 'insertDefinition').mockImplementation(async () => { throw error; });
       expect(appController.postDefinition({}, 'definition1')).rejects.toBe(error);
     });
   });
