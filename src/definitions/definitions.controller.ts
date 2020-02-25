@@ -2,6 +2,7 @@ import {
   Controller, Get, Delete, Param, Post, Body, Put,
 } from '@nestjs/common';
 import DefinitionsService from './definitions.service';
+import DefinitionDto from './doc/DefinitionDto';
 
 @Controller('/definitions')
 export default class DefinitionsController {
@@ -18,7 +19,7 @@ export default class DefinitionsController {
   }
 
   @Post('/:name')
-  postDefinition(@Body() doc, @Param('name') name) {
+  postDefinition(@Body() doc: DefinitionDto, @Param('name') name) {
     return this.appService.insertDefinition(name, doc);
   }
 

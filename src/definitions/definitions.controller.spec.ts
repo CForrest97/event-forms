@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import DefinitionsController from './definitions.controller';
 import DefinitionsService from './definitions.service';
+import DefinitionDto from './doc/DefinitionDto';
 
 describe('DefinitionsController', () => {
   let definitionController: DefinitionsController;
@@ -18,10 +19,6 @@ describe('DefinitionsController', () => {
 
   afterEach(() => {
     jest.resetAllMocks();
-  });
-  afterAll(async () => {
-    // avoid jest open handle error
-    await new Promise((resolve) => setTimeout(() => resolve(), 500));
   });
 
   describe('getDefinition', () => {
@@ -52,21 +49,31 @@ describe('DefinitionsController', () => {
   });
 
   describe('postDefinitions', () => {
-    // it.skip('should recieve success message', async () => {
-    //   const definition = { name: 'definition1' };
-    //   const response = {
-    //     writeTime: {
-    //       '_seconds': 1582493896,
-    //       '_nanoseconds': 165074000,
-    //     }
-    //   };
-    //   jest.spyOn(appService, 'insertDefinition').mockImplementation(async () => {});
-    //   expect(appController.postDefinition('definition1', definition)).resolves.toBe(response);
-    // });
-    it('should throw an error if appService.getDefinitions throws', async () => {
-      const error = new Error('default error');
-      jest.spyOn(definitionService, 'insertDefinition').mockImplementation(async () => { throw error; });
-      expect(definitionController.postDefinition({}, 'definition1')).rejects.toBe(error);
+    it('should insert a definition', async () => {
+      const expectedResponse = undefined;
+      const definition: DefinitionDto = { name: 'definition1', questions: [] };
+      jest.spyOn(definitionService, 'insertDefinition').mockImplementation(async () => expectedResponse);
+      const response = await definitionController.postDefinition(definition, 'name');
+      expect(response).toBe(expectedResponse);
+    });
+  });
+
+  describe('deleteDefinitions', () => {
+    it('should delete a definition', async () => {
+      const expectedResponse = undefined;
+      jest.spyOn(definitionService, 'removeDefinition').mockImplementation(async () => expectedResponse);
+      const response = await definitionController.deleteDefinition('name');
+      expect(response).toBe(expectedResponse);
+    });
+  });
+
+  describe('putDefinitions', () => {
+    it('should update a definition', async () => {
+      const expectedResponse = undefined;
+      const definition: DefinitionDto = { name: 'definition1', questions: [] };
+      jest.spyOn(definitionService, 'updateDefinition').mockImplementation(async () => undefined);
+      const response = await definitionController.putDefinition('name', definition);
+      expect(response).toBe(expectedResponse);
     });
   });
 });

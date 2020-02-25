@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   getOne, getAll, insert, update, remove,
-} from '../database.service';
+} from '../common/database.service';
 @Injectable()
 export default class DefinitionsService {
   async getDefinition(id: string) {

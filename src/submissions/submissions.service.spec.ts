@@ -2,12 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   SubmissionsService, isValidSubmission, getValue, validateQuestion,
 } from './submissions.service';
-import * as databaseService from '../database.service';
+import * as databaseService from '../common/database.service';
 import DefinitionsService from '../definitions/definitions.service';
 import DefinitionsController from '../definitions/definitions.controller';
 
 describe('SubmissionsService', () => {
-  // let definitionController: DefinitionsController;
   let definitionService: DefinitionsService;
   const insertMock = jest.spyOn(databaseService, 'insert');
   const getOneDefinitionMock = jest.spyOn(databaseService, 'getOne');
@@ -15,7 +14,6 @@ describe('SubmissionsService', () => {
   getOneDefinitionMock.mockReturnValue(null);
 
   let submission: ISubmission;
-  // let submissionsController: SubmissionsController;
 
   beforeEach(async () => {
     submission = {
@@ -31,7 +29,6 @@ describe('SubmissionsService', () => {
       providers: [DefinitionsService],
     }).compile();
 
-    // definitionController = app.get<DefinitionsController>(DefinitionsController);
     definitionService = app.get<DefinitionsService>(DefinitionsService);
   });
 

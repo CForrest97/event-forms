@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Validator } from 'class-validator';
-import { insert } from '../database.service';
+import { insert } from '../common/database.service';
 import DefinitionsService from '../definitions/definitions.service';
 
 const validator = new Validator();
