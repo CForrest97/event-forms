@@ -34,9 +34,9 @@ describe('Definitions (e2e)', () => {
       .send({ name: 'name', questions: [] });
     expect(postResponse.status).toEqual(201);
     const getResponse = await request(app.getHttpServer())
-      .get('/definitions');
+      .get('/definitions/name');
 
-    expect(getResponse.body).toEqual([{ name: 'name', questions: [] }]);
+    expect(getResponse.body).toEqual({ name: 'name', questions: [] });
   });
 
   it('/definitions (PUT)', async () => {

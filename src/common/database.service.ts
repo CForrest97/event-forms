@@ -1,10 +1,10 @@
 import * as admin from 'firebase-admin';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
-import serviceAccount from '../ServiceAccountKey.json';
+// import serviceAccount from '../ServiceAccountKey.json';
 
-admin.initializeApp({ credential: admin.credential.cert(serviceAccount as admin.ServiceAccount) });
-// admin.initializeApp();
+// admin.initializeApp({credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)});
+admin.initializeApp();
 
 const db = admin.firestore();
 

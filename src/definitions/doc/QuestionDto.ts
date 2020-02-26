@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import {
   IsArray, IsNotEmpty, IsString, ValidateNested, IsOptional,
 } from 'class-validator';

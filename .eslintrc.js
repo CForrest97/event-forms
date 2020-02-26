@@ -26,8 +26,10 @@ module.exports = {
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
     'no-empty-function': 'off',
+    "import/extensions": 'off'
   },
   "settings": {
     "import/extensions": [".js", ".jsx", ".ts", ".tsx", ".mjs"]
   },
+  
 };

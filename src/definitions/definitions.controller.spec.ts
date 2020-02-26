@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import DefinitionsController from './definitions.controller';
 import DefinitionsService from './definitions.service';
+// eslint-disable-next-line import/extensions
 import DefinitionDto from './doc/DefinitionDto';
 
 describe('DefinitionsController', () => {
