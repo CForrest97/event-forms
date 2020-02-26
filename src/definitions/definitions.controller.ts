@@ -18,9 +18,9 @@ export default class DefinitionsController {
     return this.appService.getDefinition(name);
   }
 
-  @Post('/:name')
-  postDefinition(@Body() doc: DefinitionDto, @Param('name') name) {
-    return this.appService.insertDefinition(name, doc);
+  @Post('/')
+  postDefinition(@Body() doc: DefinitionDto) {
+    return this.appService.insertDefinition(doc);
   }
 
   @Delete('/:name')

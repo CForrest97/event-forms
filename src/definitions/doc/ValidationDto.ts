@@ -8,7 +8,6 @@ export default class ValidationDto {
   required: boolean;
 
   @IsOptional()
-
   @IsNumber()
   maxLength?: number;
 

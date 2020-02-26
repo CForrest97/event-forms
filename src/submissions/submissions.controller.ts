@@ -1,5 +1,5 @@
 import {
-  Controller, Param, Post, Body, HttpCode,
+  Controller, Post, Body, HttpCode,
 } from '@nestjs/common';
 import { SubmissionsService } from './submissions.service';
 
@@ -7,9 +7,9 @@ import { SubmissionsService } from './submissions.service';
 export default class AppController {
   constructor(private readonly submissionsService: SubmissionsService) {}
 
-  @Post('/:name')
+  @Post('/')
   @HttpCode(200)
-  postSubmission(@Body() doc, @Param('name') name) {
-    return this.submissionsService.insertSubmission(name, doc);
+  postSubmission(@Body() doc) {
+    return this.submissionsService.insertSubmission(doc);
   }
 }

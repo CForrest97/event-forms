@@ -2,6 +2,10 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { Validator } from 'class-validator';
 import { insert } from '../common/database.service';
 import DefinitionsService from '../definitions/definitions.service';
+// eslint-disable-next-line import/extensions
+import config from '../config';
+
+const db = config.database.submissions;
 
 const validator = new Validator();
 
@@ -18,28 +22,34 @@ export const validateQuestion = (question: IQuestion, submission: ISubmission): 
     return options.some(({ value: optionValue }) => optionValue === value);
   }
 
-  const { required, maxLength, pattern } = validation;
+  if (validator.isDefined(validation)) {
+    const { required, maxLength, pattern } = validation;
 
-  if (required && !validator.isDefined(value)) return false;
-  if (!required && !validator.isDefined(value)) return true;
-  if (validator.isDefined(maxLength) && !validator.maxLength(value, maxLength)) return false;
-  if (validator.isDefined(pattern) && !validator.matches(value, new RegExp(pattern))) return false;
+    if (required && !validator.isDefined(value)) return false;
+    if (!required && !validator.isDefined(value)) return true;
+    if (validator.isDefined(maxLength) && !validator.maxLength(value, maxLength)) return false;
+    if (validator.isDefined(pattern)
+      && !validator.matches(value, new RegExp(pattern))) return false;
+  }
   return true;
 };
 
 export const isValidSubmission = async (submission): Promise<boolean> => {
   const definitionsService = new DefinitionsService();
-  const { questions } = await definitionsService.getDefinition(submission.serviceKey);
+  const match = await definitionsService.getDefinition(submission.serviceKey);
 
-  return questions.every((question) => validateQuestion(question, submission));
+  if (match == null) throw new HttpException('service name not found', HttpStatus.NOT_FOUND);
+
+  return match.questions.every((question) => validateQuestion(question, submission));
 };
 
 @Injectable()
 export class SubmissionsService {
-  async insertSubmission(name, submission) {
+  async insertSubmission(submission: ISubmission) {
     const isValid = await isValidSubmission(submission);
     if (isValid) {
-      return insert('submissions', name, submission);
+      await insert(db, submission);
+      return;
     }
     throw new HttpException('invalid submission', HttpStatus.BAD_REQUEST);
   }

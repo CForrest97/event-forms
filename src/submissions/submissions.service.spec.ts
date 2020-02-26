@@ -9,9 +9,9 @@ import DefinitionsController from '../definitions/definitions.controller';
 describe('SubmissionsService', () => {
   let definitionService: DefinitionsService;
   const insertMock = jest.spyOn(databaseService, 'insert');
-  const getOneDefinitionMock = jest.spyOn(databaseService, 'getOne');
+  const findOneDefinitionMock = jest.spyOn(databaseService, 'findOne');
   insertMock.mockReturnValue(null);
-  getOneDefinitionMock.mockReturnValue(null);
+  findOneDefinitionMock.mockReturnValue(null);
 
   let submission: ISubmission;
 
@@ -173,7 +173,7 @@ describe('SubmissionsService', () => {
           name: 'confetti',
           questions: [],
         };
-        getOneDefinitionMock.mockResolvedValue(definition);
+        findOneDefinitionMock.mockResolvedValue(definition);
         const isValid = await isValidSubmission(submission);
 
         expect(isValid).toBe(true);
@@ -201,7 +201,7 @@ describe('SubmissionsService', () => {
         };
         submission.questions = [questionSubmission1, questionSubmission2];
 
-        getOneDefinitionMock.mockResolvedValue(definition);
+        findOneDefinitionMock.mockResolvedValue(definition);
         const isValid = await isValidSubmission(submission);
 
         expect(isValid).toBe(true);
@@ -219,7 +219,7 @@ describe('SubmissionsService', () => {
           questions: [question],
         };
         jest.spyOn(definitionService, 'getDefinition').mockImplementation(async () => definition);
-        getOneDefinitionMock.mockResolvedValue(definition);
+        findOneDefinitionMock.mockResolvedValue(definition);
         const isValid = await isValidSubmission(submission);
 
         expect(isValid).toBe(false);
@@ -229,7 +229,7 @@ describe('SubmissionsService', () => {
 
   describe('insertSubmission', () => {
     describe('success scenarios', () => {
-      it('should fail a submission missing required questions', async () => {
+      it('should pass a submission which is valid', async () => {
         const submissionService = new SubmissionsService();
         const question: IQuestion = {
           key: 'body',
@@ -241,18 +241,19 @@ describe('SubmissionsService', () => {
           questions: [question],
         };
         jest.spyOn(definitionService, 'getDefinition').mockImplementation(async () => definition);
-        getOneDefinitionMock.mockResolvedValue(definition);
+
+        findOneDefinitionMock.mockResolvedValue(definition);
 
         const questionSubmission1: IQuestionSubmission = { questionKey: 'body', value: 'whole body' };
 
         submission.questions = [questionSubmission1];
-        await submissionService.insertSubmission('', submission);
+        await submissionService.insertSubmission(submission);
 
         expect(insertMock).toHaveBeenCalled();
       });
     });
     describe('failure scenarios', () => {
-      it('should fail a submission missing required questions', async () => {
+      it('should fail a submission which is valid', async () => {
         const submissionService = new SubmissionsService();
         const question: IQuestion = {
           key: 'body',
@@ -264,12 +265,12 @@ describe('SubmissionsService', () => {
           questions: [question],
         };
         jest.spyOn(definitionService, 'getDefinition').mockImplementation(async () => definition);
-        getOneDefinitionMock.mockResolvedValue(definition);
+        findOneDefinitionMock.mockResolvedValue(definition);
 
         submission.questions = [];
         let error;
         try {
-          await submissionService.insertSubmission('', submission);
+          await submissionService.insertSubmission(submission);
         } catch (err) {
           error = err;
         }

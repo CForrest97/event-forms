@@ -1,39 +1,66 @@
 import * as admin from 'firebase-admin';
+import { HttpException, HttpStatus } from '@nestjs/common';
+
 import serviceAccount from '../ServiceAccountKey.json';
 
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount as admin.ServiceAccount) });
 
 const db = admin.firestore();
 
-const getAll = async (database: string): Promise<FirebaseFirestore.DocumentData[]> => {
-  const snapshot = await db.collection(database).get();
-  return snapshot.docs.map((doc) => doc.data());
+const getAll = async (database: string) => {
+  const { docs } = await db.collection(database).get();
+  return docs.map((doc) => doc.data());
 };
 
-const getOne = async (database: string, id: string): Promise<FirebaseFirestore.DocumentData> => {
-  const snapshot = await db.collection(database).doc(id).get();
-  return snapshot.data();
+const findByName = async (database: string, name: string) => {
+  const { docs } = await db.collection(database).where('name', '==', name).get();
+  if (docs.length === 0) return undefined;
+  return docs[0];
 };
 
-const insert = (database: string, name: string, doc): Promise<FirebaseFirestore.WriteResult> => db
-  .collection(database)
-  .doc(name)
-  .set(doc);
+const findOne = async (database: string, name: string) => {
+  const doc = await findByName(database, name);
+  return doc.data();
+};
 
-const update = (database: string, name: string, doc): Promise<FirebaseFirestore.WriteResult> => db
-  .collection(database)
-  .doc(name)
-  .update(doc);
+const insert = async (database: string, doc) => {
+  const match = await findByName(database, doc.name);
+  if (match != null) throw new HttpException('name already exists', HttpStatus.BAD_REQUEST);
+  return db.collection(database).add(doc);
+};
 
-const remove = (database: string, name: string): Promise<FirebaseFirestore.WriteResult> => db
-  .collection(database)
-  .doc(name)
-  .delete();
+const update = async (database: string, name: string, doc) => {
+  const match = await findByName(database, name);
+  if (match == null) throw new HttpException('name not found', HttpStatus.BAD_REQUEST);
+  const { id } = match;
+  db.collection(database)
+    .doc(id)
+    .update(doc);
+};
+
+const remove = async (database: string, name: string) => {
+  const match = await findByName(database, name);
+  if (match == null) throw new HttpException('name not found', HttpStatus.BAD_REQUEST);
+  const { id } = match;
+  db.collection(database)
+    .doc(id)
+    .delete();
+};
+
+const deleteAll = async (database: string) => {
+  const { docs } = await db.collection(database).get();
+  const ids = docs.map(({ id }) => id);
+  ids.map((id) => db.collection(database)
+    .doc(id)
+    .delete());
+  await Promise.all(ids);
+};
 
 export {
   getAll,
-  getOne,
   insert,
   update,
   remove,
+  findOne,
+  deleteAll,
 };

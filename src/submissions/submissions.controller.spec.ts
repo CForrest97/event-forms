@@ -19,16 +19,12 @@ describe('SubmissionController', () => {
   afterEach(() => {
     jest.resetAllMocks();
   });
-  afterAll(async () => {
-    // avoid jest open handle error
-    await new Promise((resolve) => setTimeout(() => resolve(), 500));
-  });
 
   describe('postSubmissions', () => {
     it('should throw an error if submissionService.getSubmissions throws', async () => {
       const error = new Error('default error');
       jest.spyOn(submissionService, 'insertSubmission').mockImplementation(async () => { throw error; });
-      expect(submissionController.postSubmission({}, 'submission1')).rejects.toBe(error);
+      expect(submissionController.postSubmission({ name: 'name' })).rejects.toBe(error);
     });
   });
 });

@@ -53,7 +53,7 @@ describe('DefinitionsController', () => {
       const expectedResponse = undefined;
       const definition: DefinitionDto = { name: 'definition1', questions: [] };
       jest.spyOn(definitionService, 'insertDefinition').mockImplementation(async () => expectedResponse);
-      const response = await definitionController.postDefinition(definition, 'name');
+      const response = await definitionController.postDefinition(definition);
       expect(response).toBe(expectedResponse);
     });
   });
