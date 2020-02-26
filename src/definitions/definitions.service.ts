@@ -24,10 +24,10 @@ export default class DefinitionsService {
   }
 
   async updateDefinition(name, definition) {
-    return update(db, name, definition);
+    await update(db, name, definition);
   }
 
   async removeDefinition(name) {
-    return remove(db, name);
+    await remove(db, name);
   }
 }

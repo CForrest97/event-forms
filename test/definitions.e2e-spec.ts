@@ -21,51 +21,50 @@ describe('Definitions (e2e)', () => {
     await deleteAll('definitions_test');
   });
 
-  it('/definitions (GET)', () => request(app.getHttpServer())
-    .get('/definitions')
-    .expect(200)
-    .expect([]));
+  it('/definitions (GET)', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/definitions');
 
-  it('/definitions (GET)', () => request(app.getHttpServer())
-    .post('/definitions')
-    .send({ name: 'name', questions: [] })
-    .expect(201)
-    .then(() => request(app.getHttpServer())
-      .get('/definitions/name')
-      .expect(200)
-      .expect({ questions: [], name: 'name' })));
+    expect(response.body).toEqual([]);
+  });
 
-  it('/definitions (POST)', () => request(app.getHttpServer())
-    .post('/definitions')
-    .send({ name: 'name', questions: [] })
-    .expect(201)
-    .then(() => request(app.getHttpServer())
-      .get('/definitions')
-      .expect(200)
-      .expect([{ questions: [], name: 'name' }])));
+  it('/definitions (POST + GET)', async () => {
+    const postResponse = await request(app.getHttpServer())
+      .post('/definitions')
+      .send({ name: 'name', questions: [] });
+    expect(postResponse.status).toEqual(201);
+    const getResponse = await request(app.getHttpServer())
+      .get('/definitions');
 
-  it('/definitions (PUT)', () => request(app.getHttpServer())
-    .post('/definitions')
-    .send({ name: 'name', questions: [] })
-    .expect(201)
-    .then(() => request(app.getHttpServer())
-      .put('/definitions/name')
-      .send({ name: 'name2' })
-      .expect(200)
-      .then(() => request(app.getHttpServer())
-        .get('/definitions')
-        .expect(200)
-        .expect([{ questions: [], name: 'name2' }]))));
+    expect(getResponse.body).toEqual([{ name: 'name', questions: [] }]);
+  });
 
-  it('/definitions (DELETE)', () => request(app.getHttpServer())
-    .post('/definitions')
-    .send({ name: 'name', questions: [] })
-    .expect(201)
-    .then(() => request(app.getHttpServer())
-      .delete('/definitions/name')
-      .expect(200)
-      .then(() => request(app.getHttpServer())
-        .get('/definitions')
-        .expect(200)
-        .expect([]))));
+  it('/definitions (PUT)', async () => {
+    const postResponse = await request(app.getHttpServer())
+      .post('/definitions')
+      .send({ name: 'name1', questions: [] });
+    expect(postResponse.status).toEqual(201);
+    const putResponse = await request(app.getHttpServer())
+      .put('/definitions/name1')
+      .send({ name: 'name2' });
+    expect(putResponse.status).toEqual(200);
+    const getResponse = await request(app.getHttpServer())
+      .get('/definitions/name2');
+
+    expect(getResponse.body).toEqual({ name: 'name2', questions: [] });
+  });
+
+  it('/definitions (DELETE)', async () => {
+    const postResponse = await request(app.getHttpServer())
+      .post('/definitions')
+      .send({ name: 'name', questions: [] });
+    expect(postResponse.status).toEqual(201);
+    const deleteResponse = await request(app.getHttpServer())
+      .delete('/definitions/name');
+    expect(deleteResponse.status).toEqual(200);
+    const getResponse = await request(app.getHttpServer())
+      .get('/definitions/name');
+
+    expect(getResponse.status).toEqual(404);
+  });
 });

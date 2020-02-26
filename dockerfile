@@ -22,6 +22,7 @@ COPY --from=build /src/node_modules node_modules
 COPY --from=build /src/dist dist
 
 ENV PORT 8080
+ENV NODE_ENV production
 
 USER node
 

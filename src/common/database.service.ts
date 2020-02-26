@@ -4,6 +4,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import serviceAccount from '../ServiceAccountKey.json';
 
 admin.initializeApp({ credential: admin.credential.cert(serviceAccount as admin.ServiceAccount) });
+// admin.initializeApp();
 
 const db = admin.firestore();
 
@@ -20,7 +21,7 @@ const findByName = async (database: string, name: string) => {
 
 const findOne = async (database: string, name: string) => {
   const doc = await findByName(database, name);
-  return doc.data();
+  return doc ? doc.data() : undefined;
 };
 
 const insert = async (database: string, doc) => {
@@ -33,7 +34,7 @@ const update = async (database: string, name: string, doc) => {
   const match = await findByName(database, name);
   if (match == null) throw new HttpException('name not found', HttpStatus.BAD_REQUEST);
   const { id } = match;
-  db.collection(database)
+  return db.collection(database)
     .doc(id)
     .update(doc);
 };
@@ -42,7 +43,7 @@ const remove = async (database: string, name: string) => {
   const match = await findByName(database, name);
   if (match == null) throw new HttpException('name not found', HttpStatus.BAD_REQUEST);
   const { id } = match;
-  db.collection(database)
+  return db.collection(database)
     .doc(id)
     .delete();
 };
